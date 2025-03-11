@@ -76,8 +76,12 @@ WSGI_APPLICATION = 'job_search_api.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+         'ENGINE': 'django.db.backends.mysql',
+        'NAME': BASE_DIR / 'jobquestapi_db',
+        'USER': 'root',
+        'PASSWORD': 'teregaga@001',
+        'HOST': 'localhost',
+        'PORT': '3306',
     }
 }
 
