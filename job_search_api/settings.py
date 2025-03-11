@@ -80,7 +80,7 @@ WSGI_APPLICATION = 'job_search_api.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': BASE_DIR / 'job_search_db',
+        'NAME': 'job_search_db',
         'USER': 'root',
         'PASSWORD': 'teregaga@001',
         'HOST': 'localhost',
