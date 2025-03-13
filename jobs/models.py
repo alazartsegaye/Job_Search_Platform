@@ -15,3 +15,4 @@ class JobApplication(models.Model):
     applicant = models.ForeignKey(User, on_delete=models.CASCADE)
     applied_at = models.DateTimeField(auto_now_add=True)
     cover_letter = models.TextField(blank=True, null=True)
+    resume = models.FileField(upload_to='resumes/', null=True, blank=True)
