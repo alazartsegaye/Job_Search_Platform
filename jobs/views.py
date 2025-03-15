@@ -1,7 +1,9 @@
 from django.shortcuts import render, get_object_or_404
 from rest_framework import viewsets, permissions, generics
-from .models import Job, JobApplication
+from .models import Job
 from .serializers import JobSerializer, JobApplicationSerializer
+from django.http import JsonResponse
+from django.views import View
 from rest_framework import filters
 
 class JobViewSet(viewsets.ModelViewSet):
@@ -23,14 +25,27 @@ class ApplyJobView(generics.CreateAPIView):
         job = get_object_or_404(Job, id=self.kwargs['job_id'])
         serializer.save(applicant=self.request.user, job=job)
 
-class JobApplicationListView(generics.ListAPIView):
-    serializer_class = JobApplicationSerializer
+class JobCreateView(generics.CreateAPIView):
+    serializer_class = JobSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def get_queryset(self):
-        job = get_object_or_404(Job, id=self.kwargs['job_id'])
-        return JobApplication.objects.filter(job=job)
+    def perform_create(self, serializer):
+        serializer.save(posted_by=self.request.user)
+
+
+class JobDetailView(View):
+    def get(self, job_id):
+        try:
+            job = Job.objects.get(id=id)
+            data = {
+                'id': job.id,
+                'title': job.title,
+                'description': job.description,
+            }
+            return JsonResponse(data)
+        except Job.DoesNotExist:
+            return JsonResponse({'error': 'Job not found'}, status=404)
 
 def job_listings_view(request):
-    jobs = Job.objects.all().order_by('-posted_at')
+    jobs = Job.objects.all()
     return render(request, 'jobs/job_listings.html', {'jobs': jobs})
