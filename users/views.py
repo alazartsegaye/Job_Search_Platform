@@ -1,40 +1,60 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import User
 from .serializers import UserSerializer
-from rest_framework.views import APIView
-from rest_framework import generics, viewsets
+from rest_framework import viewsets
 from django.contrib.auth import authenticate, login, logout
-from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework.response import Response
-from rest_framework import status
-from django.http import JsonResponse
-
-class RegisterView(generics.CreateAPIView):
-    serializer_class = UserSerializer
-    permission_classes = [AllowAny]
+from rest_framework.permissions import IsAuthenticated
+from django.contrib import messages
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
+    
+def home_view(request):
+    return render(request, 'jobs/home.html')
 
-class LoginView(APIView):
-    permission_classes = [AllowAny]
-
-    def post(self, request):
-        username = request.data.get('username')
-        password = request.data.get('password')
+def login_view(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
         user = authenticate(request, username=username, password=password)
-        
         if user is not None:
             login(request, user)
-            return Response({'message': 'Login successful'}, status=status.HTTP_200_OK)
+            return redirect('home')
         else:
-            return Response({'error': 'Invalid Credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+            messages.error(request, 'Invalid credentials')
+    return render(request, 'jobs/login.html')
 
-class LogoutView(APIView):
-    permission_classes = [IsAuthenticated]
+def register_view(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+        password2 = request.POST.get('password2')
 
-    def post(self, request):
-        logout(request)
-        return Response({'message': 'Logged out successfully'}, status=status.HTTP_200_OK)
+        if password == password2:
+            if User.objects.filter(username=username).exists():
+                messages.error(request, 'Username already exists.')
+            elif User.objects.filter(email=email).exists():
+                messages.error(request, 'Email already exists.')
+            else:
+                user = User.objects.create_user(
+                    username=username,
+                    first_name=first_name,
+                    last_name=last_name,
+                    email=email,
+                    password=password
+                )
+                user.save()
+                login(request, user)
+                return redirect('home')
+        else:
+            messages.error(request, 'Passwords do not match.')
+    return render(request, 'jobs/register.html')
+
+def logout_view(request):
+    logout(request)
+    return redirect('home')
