@@ -38,14 +38,7 @@ class JobCreateView(generics.CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
-        serializer.save(posted_by=self.request.user)
-
-class JobCreateView(generics.CreateAPIView):
-    serializer_class = JobSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-    def perform_create(self, serializer):
-        serializer.save(posted_by=self.request.user)
+        serializer.save()
 
 def job_listings_view(request):
     jobs = Job.objects.all()
