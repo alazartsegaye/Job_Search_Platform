@@ -12,7 +12,7 @@ class UserViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     
 def home_view(request):
-    return render(request, 'jobs/home.html')
+    return render(request, 'users/home.html')
 
 def login_view(request):
     if request.method == 'POST':
@@ -24,7 +24,7 @@ def login_view(request):
             return redirect('home')
         else:
             messages.error(request, 'Invalid credentials')
-    return render(request, 'jobs/login.html')
+    return render(request, 'users/login.html')
 
 def register_view(request):
     if request.method == 'POST':
@@ -53,7 +53,7 @@ def register_view(request):
                 return redirect('home')
         else:
             messages.error(request, 'Passwords do not match.')
-    return render(request, 'jobs/register.html')
+    return render(request, 'users/register.html')
 
 def logout_view(request):
     logout(request)
