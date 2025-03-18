@@ -6,6 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Job Listings</title>
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <style>
+        body {
+            background-image: url("{% static 'images/dark-background.jpeg' %}");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+        }
+    </style>
 </head>
 <body>
     
@@ -16,18 +24,18 @@
             <a href="{% url 'admin:index' %}">Admin</a>
             <a href="{% url 'job_listings' %}">Job Lists</a>
             {% if user.is_authenticated %}
-            <a href="{% url 'create_job' %}">Post Job</a>
-        {% endif %}
-        {% if not user.is_authenticated %}
-            <a href="{% url 'register' %}">Register</a>
-            <a href="{% url 'login' %}">Login</a>
-        {% else %}
-            <a href="{% url 'logout' %}">Logout</a>
-        {% endif %}
+                <a href="{% url 'create_job' %}">Post Job</a>
+            {% endif %}
+            {% if not user.is_authenticated %}
+                <a href="{% url 'register' %}">Register</a>
+                <a href="{% url 'login' %}">Login</a>
+            {% else %}
+                <a href="{% url 'logout' %}">Logout</a>
+            {% endif %}
         </div>
     </div>
 
-    <h1 style="margin: 20px;">Job Listings</h1>
+    <h1 style="margin: 20px; color: white;">Job Lists</h1>
     
     {% for job in jobs %}
         <div class="job-listing">
@@ -36,14 +44,15 @@
             <p><strong>Skills required:</strong> {{ job.skills_required }}</p>
             <p><strong>Company:</strong> {{ job.company }}</p>
             <p><strong>Location:</strong> {{ job.location }}</p>
-            <p><small>Posted {{ job.posted_by.username }} at {{ job.posted_at }}</small></p>
+            <p><small>Posted by {{ job.posted_by.username }} at {{ job.posted_at }}</small></p>
             <form action="{% url 'apply_job' job.id %}" method="post">
                 {% csrf_token %}
                 <button type="submit" class="apply-button">Apply</button>
             </form>
         </div>
     {% empty %}
-        <p style="margin: 20px;">No job listings available.</p>
+        <p style="margin: 20px; color: white;">No job listings available.</p>
     {% endfor %}
+
 </body>
 </html>
