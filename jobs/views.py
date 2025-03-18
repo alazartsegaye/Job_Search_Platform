@@ -1,44 +1,61 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render
 from .serializers import JobSerializer, JobApplicationSerializer
-from .models import Job
-from rest_framework import viewsets, permissions, generics
-from rest_framework import filters
+from .models import Job, JobApplication
+from rest_framework.generics import RetrieveAPIView, CreateAPIView, UpdateAPIView, DestroyAPIView
+from rest_framework.permissions import IsAuthenticated
+from rest_framework import viewsets, filters
+from rest_framework import permissions
+from .permissions import IsEmployer
 from rest_framework.response import Response
 from rest_framework.exceptions import PermissionDenied
 
-class JobViewSet(viewsets.ModelViewSet):
-    queryset = Job.objects.all().order_by('-posted_at')
+class JobListView(viewsets.ModelViewSet):
+    queryset = Job.objects.all()
     serializer_class = JobSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
     filter_backends = [filters.SearchFilter]
     filterset_fields = ['title', 'company', 'location']
 
+class JobDetailView(RetrieveAPIView):
+    queryset = Job.objects.all()
+    serializer_class = JobSerializer
+    lookup_field = 'id'
 
-    def perform_create(self, serializer):
-        serializer.save(posted_by=self.request.user)
-
-class ApplyJobView(generics.CreateAPIView):
+class JobApplyView(CreateAPIView):
+    queryset = JobApplication.objects.all()
     serializer_class = JobApplicationSerializer
-    permission_classes = [permissions.IsAuthenticated]
 
     def perform_create(self, serializer):
-        job = get_object_or_404(Job, id=self.kwargs['job_id'])
-        serializer.save(applicant=self.request.user, job=job)
+        if not self.request.user.is_authenticated:
+            raise PermissionDenied("You must be logged in to apply for a job.")
+        serializer.save(applicant=self.request.user)
 
     def handle_exception(self, exc):
         if isinstance(exc, PermissionDenied):
-            return Response(
-                {"detail": "Authentication required. Please log in or create an account to apply for this job."},
-                status=403
-            )
+            return Response({"detail": str(exc)}, status=403)
         return super().handle_exception(exc)
 
-class JobCreateView(generics.CreateAPIView):
+class JobCreateView(CreateAPIView):
+    queryset = Job.objects.all()
     serializer_class = JobSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
-        serializer.save()
+        serializer.save(employer=self.request.user)
+
+class JobUpdateView(UpdateAPIView):
+    queryset = Job.objects.all()
+    serializer_class = JobSerializer
+    permission_classes = [IsAuthenticated, IsEmployer]
+    lookup_field = 'id'
+
+    def perform_update(self, serializer):
+        serializer.save(employer=self.request.user)
+
+class JobDeleteView(DestroyAPIView):
+    queryset = Job.objects.all()
+    permission_classes = [IsAuthenticated, IsEmployer]
+    lookup_field = 'id'
 
 def job_listings_view(request):
     jobs = Job.objects.all()
