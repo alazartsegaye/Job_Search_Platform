@@ -2,9 +2,6 @@ body {
     font-family:Verdana, Geneva, Tahoma, sans-serif;
     margin: 0;
     padding: 0;
-    background-image: url("{% static 'images/css/dark-background.jpeg' %}");
-    background-size: cover;
-    background-position: center;
 }
 
 .navbar {
@@ -36,34 +33,65 @@ body {
     text-align: center;
     margin: 40px 20px;
     font-size: 24px;
-    color: #333;
+    color: white;
 }
 
 .job-listing {
-    border: none;
-    padding: 10px;
-    margin-bottom: 10px;
-    margin: 20px;
+    background-color: rgba(0, 0, 0, 0.8);
+    color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    margin: 20px auto;
+    padding: 20px;
     max-width: 800px;
+    transition: transform 0.2s ease-in-out;
 }
 
-.job-listing p {
-    margin: 5px 0;
-    word-wrap: break-word;
+.job-title {
+    font-size: 28px;
+    font-weight: bold;
+    color: #4CAF50;
+    margin-bottom: 10px;
 }
 
-.job-listing .description {
-    max-width: 100%;
+.description {
+    font-size: 16px;
+    margin-bottom: 20px;
+}
+
+.job-details p {
+    font-size: 14px;
+    margin: 8px 0;
+}
+
+.skills, .company, .location {
+    font-weight: 600;
+    color: #555;
+}
+
+.posted-info {
+    font-size: 12px;
+    color: #888;
+    margin-top: 10px;
+}
+
+/* Button Styling */
+.apply-form {
+    margin-top: 20px;
 }
 
 .apply-button {
-    background-color: #007bff;
+    background-color: #4CAF50;
     color: white;
-    padding: 5px 10px;
+    padding: 10px 20px;
+    font-size: 16px;
     border: none;
+    border-radius: 5px;
     cursor: pointer;
+    transition: background-color 0.3s ease;
 }
 
 .apply-button:hover {
-    background-color: #0056b3;
+    background-color: #45a049;
+    transform: scale(1.04);
 }
