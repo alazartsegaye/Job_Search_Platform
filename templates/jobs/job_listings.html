@@ -1,58 +1,53 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Job Listings</title>
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-    <style>
-        body {
-            background-image: url("{% static 'images/dark-background.jpeg' %}");
-            background-size: cover;
-            background-position: center;
-            background-attachment: fixed;
-        }
-    </style>
-</head>
-<body>
-    
-    <div class="navbar">
-        <div class="logo">Job Management API</div>
-        <div>
-            <a href="{% url 'home' %}">Home</a>
-            <a href="{% url 'admin:index' %}">Admin</a>
-            <a href="{% url 'job_listings' %}">Job Lists</a>
-            {% if user.is_authenticated %}
-                <a href="{% url 'create_job' %}">Post Job</a>
-            {% endif %}
-            {% if not user.is_authenticated %}
-                <a href="{% url 'register' %}">Register</a>
-                <a href="{% url 'login' %}">Login</a>
-            {% else %}
-                <a href="{% url 'logout' %}">Logout</a>
-            {% endif %}
-        </div>
+
+{% block title %}Job Listings - Job Management API{% endblock %}
+
+{% block content %}
+    <h2 class="job-list-title">Job Lists</h2>
+
+    <div class="search-container">
+        <form action="{% url 'job_listings' %}" method="get" class="search-form">
+            <input type="text" name="search" placeholder="Search jobs..." value="{{ request.GET.search }}">
+            <select name="location">
+                <option value="">All Locations</option>
+                {% for location in locations %}
+                    <option value="{{ location }}" {% if request.GET.location == location %}selected{% endif %}>{{ location }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit"><i class="fas fa-search"></i> Search</button>
+        </form>
     </div>
-
-    <h1 style="margin: 20px; color: white;">Job Lists</h1>
     
-    {% for job in jobs %}
-        <div class="job-listing">
-            <h2>{{ job.title }}</h2>
-            <p class="description">{{ job.description }}</p>
-            <p><strong>Skills required:</strong> {{ job.skills_required }}</p>
-            <p><strong>Company:</strong> {{ job.company }}</p>
-            <p><strong>Location:</strong> {{ job.location }}</p>
-            <p><small>Posted by {{ job.posted_by.username }} at {{ job.posted_at }}</small></p>
-            <form action="{% url 'apply_job' job.id %}" method="post">
-                {% csrf_token %}
-                <button type="submit" class="apply-button">Apply</button>
-            </form>
-        </div>
-    {% empty %}
-        <p style="margin: 20px; color: white;">No job listings available.</p>
-    {% endfor %}
-
-</body>
-</html>
+    <div class="container">
+        {% for job in jobs %}
+            <div class="job-listing">
+                <h2>{{ job.title }}</h2>
+                <p class="description">{{ job.description|linebreaksbr }}</p>
+                <div class="skills-section">
+                    <span class="skills-title">Skills Required:</span>
+                    <div class="skills-list">
+                        {% if job.skills_required %}
+                            <div class="skill-item">{{ job.skills_required|linebreaksbr }}</div>
+                        {% else %}
+                            <div class="skill-item">No specific skills listed</div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <div class="company-location">
+                    <p><strong>Company:</strong> {{ job.company }}</p>
+                    <p><strong>Location:</strong> {{ job.location }}</p>
+                </div>
+                
+                <p><small>Posted at {{ job.posted_at }}</small></p>
+                <form action="{% url 'apply_job' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="apply-button">Apply</button>
+                </form>
+            </div>
+        {% empty %}
+            <p class="empty-state">No job listings available.</p>
+        {% endfor %}
+    </div>
+{% endblock %}
