@@ -1,0 +1,44 @@
+Job_Search_Platform/
+├── manage.py
+├── job_search_api/  # Main project folder
+│   ├── __init__.py
+│   ├── asgi.py
+│   ├── settings.py
+│   ├── urls.py
+│   └── wsgi.py
+├── users/  # Users app
+│   ├── __init__.py
+│   ├── admin.py
+│   ├── apps.py
+│   ├── forms.py
+│   ├── migrations/
+│   ├── models.py
+│   ├── permissions.py
+│   ├── serializers.py
+│   ├── tests.py
+│   ├── urls.py
+│   └── views.py
+├── jobs/  # Jobs app
+│   ├── __init__.py
+│   ├── admin.py
+│   ├── apps.py
+│   ├── migrations/
+│   ├── models.py
+│   ├── permissions.py
+│   ├── serializers.py
+│   ├── tests.py
+│   ├── urls.py
+│   └── views.py
+├── templates/
+│   ├── users/
+│   │   ├── home.html
+│   │   ├── login.html
+│   │   └── register.html
+│   ├── jobs/
+│   │   └── job_listings.html
+│   └── base.html
+└── static/
+    ├── css/
+    │   └── styles.css
+    └── images/
+        └── dark-background.jpeg
