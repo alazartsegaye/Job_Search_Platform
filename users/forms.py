@@ -1,11 +1,16 @@
+from django.contrib.auth.forms import UserCreationForm
 from django import forms
 from .models import User
-from django.contrib.auth.forms import UserCreationForm
 
 class RegisterForm(UserCreationForm):
-    first_name = forms.CharField(required=True)
-    last_name = forms.CharField(required=True)
-    email = forms.EmailField(required=True)
+    password1 = forms.CharField(
+        widget=forms.PasswordInput(attrs={'placeholder': 'Enter Password'}),
+        help_text=''
+    )
+    password2 = forms.CharField(
+        widget=forms.PasswordInput(attrs={'placeholder': 'Confirm Password'}),
+        help_text=''  
+    )
 
     class Meta:
         model = User
