@@ -29,9 +29,9 @@
                 <a href="{% url 'user-profile' %}">Profile</a>
 
                 {% if user.is_employer %}
-                    <a href="{% url 'employer-applications' %}">Job Applications</a>
+                    <a href="{% url 'employer-applications' %}">Received Applications</a>
                 {% else %}
-                    <a href="{% url 'applicant-applications' %}">My Applications</a>
+                    <a href="{% url 'applicant-applications' %}">My Applied Jobs</a>
                 {% endif %}
 
                 <!-- Logout form styled as a link -->
