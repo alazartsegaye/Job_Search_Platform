@@ -1,79 +1,47 @@
-# JobSearch API
+# JOB SEARCH PLATFORM API
 
-JobSearch API is a Django-based job board API that allows users to post, apply for, and manage job listings. The API provides authentication, user management, job applications, and role-based permissions.
-
----
+A full-featured job management platform built with Django that connects employers and job seekers. This application allows employers to post jobs and manage applications while job seekers can search for and apply to positions.
 
 ## Features
 
-- **User Authentication** (Register, Login, Logout)
-- **Role-based Access Control**
-  - Employers can **create, update, and delete** job posts.
-  - Applicants can **apply** for jobs and **view application status**.
-  - Employers can **view and manage job applications**.
-- **Job Search and Filtering**
-- **API Endpoints for Job Listings & Applications**
-- **Admin Panel for Managing Users and Jobs**
+### User Management
+- Custom User model extending Django's AbstractUser
+- Role-based functionality (employer/applicant)
+- User registration and authentication with token support
+- Profile management
 
----
+### For Employers
+- Create and manage job listings
+- View and respond to applications
+- Track applicant status
 
-## Technologies Used
+### For Job Seekers
+- Browse and search job listings
+- Apply to jobs with resume and cover letter
+- Track application status
 
-- **Django** & **Django REST Framework (DRF)**
-- **MySQL** as the database
-- **Session-Based Authentication**
-- **PythonAnywhere Deployment**
-- **HTML Templates for Authentication**
-- **HTML Templates for Job Lists**
+### API
+- RESTful API with token authentication
+- Comprehensive permissions system
+- Endpoints for users, jobs, and applications
 
----
+## Technology Stack
 
-## Project Structure
+- **Backend**: Django 4.2, Django REST Framework
+- **Database**: MySQL (development), MySQL (production-ready)
+- **Authentication**: Django Authentication, Token Authentication
+- **Environment Management**: python-dotenv
 
-Job_search_Platform/
-├── job_search_api/          # Project configuration
-│   ├── __init__.py          
-│   ├── asgi.py              # ASGI configuration
-│   ├── settings.py          # Project settings
-│   ├── urls.py              # Main URL routing
-│   ├── wsgi.py              # WSGI configuration
-│
-├── jobs/                    # Jobs app
-│   ├── __init__.py
-│   ├── admin.py             # Admin configuration
-│   ├── apps.py              # App configuration
-│   ├── models.py            # Job & Application models
-│   ├── permissions.py       # Permissions for job-related actions
-│   ├── serializers.py       # Serializers for API responses
-│   ├── tests.py             # Unit tests for jobs app
-│   ├── urls.py              # URL routing for jobs
-│   ├── views.py             # View logic (CBV & FBV)
-│
-├── users/                   # Users app
-│   ├── __init__.py
-│   ├── admin.py             # Admin configuration
-│   ├── apps.py              # App configuration
-│   ├── models.py            # Custom user model
-│   ├── permissions.py       # User permissions
-│   ├── serializers.py       # Serializers for users
-│   ├── tests.py             # Unit tests for users app
-│   ├── urls.py              # URL routing for users
-│   ├── views.py             # Authentication & profile management
-│
-├── static/                  # Static files (CSS, JavaScript, images)
-│   ├── css/                 # Stylesheets
-│   ├── images/              # Image assets
-│
-├── templates/               # HTML templates (for authentication & admin)
-|   ├── base.html 
-│   ├── users/
-│   │   ├── home.html
-│   │   ├── login.html
-│   │   ├── register.html
-│   ├── jobs/
-│   │   ├── job_listings.html
-|
-├── manage.py                # Django command-line utility
-├── requirements.txt         # Project dependencies
-├── README.md                # Project documentation
-└── .gitignore               # Git ignored files
+## Installation
+
+### Prerequisites
+- Python 3.8+
+- pip
+- Virtual environment (recommended)
+
+### Setup
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/django-job-management.git
+   cd JOB_Search_Platform
