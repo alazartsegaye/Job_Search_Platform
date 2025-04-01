@@ -1,0 +1,22 @@
+# Core Django
+Django
+
+# Database
+mysqlclient  # MySQL adapter for Python
+
+# REST Framework
+djangorestframework
+
+# Token Authentication (part of DRF)
+# djangorestframework-authtoken
+
+django-filter  # For DRF filtering
+
+# Pillow
+Pillow  # For image processing
+
+# Static files
+whitenoise  # For static file serving
+
+# Environment variables
+python-dotenv  # For .env file loading
