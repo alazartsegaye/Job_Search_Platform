@@ -1,16 +1,14 @@
-from django.shortcuts import render
-from .serializers import UserSerializer
-from .models import User
-from rest_framework import viewsets
-from .permissions import IsOwnerOrReadOnly, OnlyAdminAccess
-from rest_framework.permissions import IsAuthenticated
+from django.shortcuts import render, redirect
+from rest_framework import viewsets, status
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
-from django.contrib.auth.forms import AuthenticationForm
-from .forms import RegisterForm
+from rest_framework.views import APIView
+from rest_framework.response import Response
 from rest_framework.authtoken.models import Token
-from django.contrib.auth import login
-from django.contrib import messages
-from django.http import JsonResponse
+from django.contrib.auth import authenticate, login, logout
+from .serializers import UserSerializer, RegisterSerializer
+from .models import User
+from .permissions import IsOwnerOrReadOnly, OnlyAdminAccess
 
 # User API ViewSet (Only Admins Can Access)
 class UserViewSet(viewsets.ModelViewSet):
@@ -20,7 +18,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
 # Home View
 def home_view(request):
-    return render(request, 'users/home.html')
+    return render(request, 'home.html')
 
 # User Profile API View (Authenticated Users Only)
 class UserProfileView(RetrieveUpdateDestroyAPIView):
@@ -30,38 +28,38 @@ class UserProfileView(RetrieveUpdateDestroyAPIView):
     def get_object(self):
         return self.request.user
 
-# Register View (Token Generates )
-def register_view(request):
-    if request.method == "POST":
-        form = RegisterForm(request.POST)
-        if form.is_valid():
-            user = form.save()
+# Register API View
+class RegisterAPIView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = RegisterSerializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.save()
+            token, created = Token.objects.get_or_create(user=user)
+            return Response({'token': token.key, 'message': 'Registration successful'}, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+# Login API View
+class LoginAPIView(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        username = request.data.get('username')
+        password = request.data.get('password')
+        user = authenticate(username=username, password=password)
+
+        if user is not None:
             login(request, user)
             token, created = Token.objects.get_or_create(user=user)
+            return redirect('home') 
+        return Response({'error': 'Invalid credentials'}, status=status.HTTP_400_BAD_REQUEST)
 
-            messages.success(request, "Registration successful.")
-            return JsonResponse({'token': token.key, 'message': 'Registration successful'})
-        else:
-            messages.error(request, "Registration failed. Please correct the errors below.")
-            return JsonResponse({'error': 'Registration failed. Please check the form.'}, status=400)
-    form = RegisterForm()
-    return render(request, "users/register.html", {"form": form})
+# Logout API View
+class LogoutAPIView(APIView):
+    permission_classes = [IsAuthenticated]
 
-# Login View (Token Required)
-def login_view(request):
-    if request.method == "POST":
-        form = AuthenticationForm(data=request.POST)
-        if form.is_valid():
-            user = form.get_user()
-
-            token_exists = Token.objects.filter(user=user).exists()
-            if not token_exists:
-                return JsonResponse({'error': 'Token required. Please register again to get a token.'}, status=403)
-
-            login(request, user)
-            token = Token.objects.get(user=user)
-            return JsonResponse({'token': token.key, 'message': 'Login successful'})
-        else:
-            return JsonResponse({'error': 'Invalid credentials'}, status=400)
-    form = AuthenticationForm()
-    return render(request, "users/login.html", {"form": form})
+    def post(self, request):
+        request.user.auth_token.delete()
+        logout(request)
+        return redirect('home')
