@@ -30,13 +30,10 @@ Job_Search_Platform/
 │   ├── urls.py
 │   └── views.py
 ├── templates/
-│   ├── users/
-│   │   ├── home.html
-│   │   ├── login.html
-│   │   └── register.html
 │   ├── jobs/
 │   │   └── job_listings.html
-│   └── base.html
+│   ├── base.html
+│   └── home.html
 └── static/
     ├── css/
     │   └── styles.css
